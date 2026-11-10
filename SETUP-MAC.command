@@ -1,7 +1,7 @@
 #!/bin/bash
 # Meeting Copilot - one-time setup on a Mac. Double-click it in Finder.
 cd "$(dirname "$0")" || exit 1
-fail() { echo; echo "  $1"; echo; read -n1 -p "Press any key to close."; exit 1; }
+fail() { echo; echo "  $1"; echo; read -n1 -p "Press any key to close." || true; exit 1; }
 
 echo "=== Meeting Copilot - Mac setup ==="
 echo
@@ -45,4 +45,5 @@ echo "  ChatGPT:  open Terminal, run  npm install -g @openai/codex  then  codex 
 echo
 echo "Then double-click START.command. The first start asks for Microphone and"
 echo "Screen & System Audio Recording: allow both for Electron."
-read -n1 -p "Press any key to close."
+read -n1 -p "Press any key to close." || true
+exit 0

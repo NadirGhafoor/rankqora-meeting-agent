@@ -3,4 +3,5 @@
 cd "$(dirname "$0")" || exit 1
 node tools/check-claude.js
 node tools/check-chatgpt.js
-read -n1 -p "Press any key to close."
+read -n1 -p "Press any key to close." || true
+exit 0
