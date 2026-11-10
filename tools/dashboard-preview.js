@@ -112,10 +112,22 @@ app.whenReady().then(async () => {
   fs.writeFileSync(out, img.toPNG());
   console.log('  saved', out);
 
-  // And the Brief tab, where a meeting is prepared.
+  // And the Brief tab, where a meeting is prepared. A window that is behind
+  // others is not repainted, and capturePage() then hands back the previous
+  // frame: the "brief" picture came out as a second copy of Settings. So wait
+  // for two real frames, force a repaint, and refuse to save a duplicate.
   await wc.executeJavaScript(`document.querySelector('#tabs button[data-tab="brief"]').click(); true;`);
-  await new Promise((r) => setTimeout(r, 800));
-  const brief = await wc.capturePage();
+  win.show(); win.focus();
+  let brief = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await wc.executeJavaScript('new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))');
+    wc.invalidate();
+    await new Promise((r) => setTimeout(r, 600));
+    brief = await wc.capturePage();
+    if (!brief.toPNG().equals(img.toPNG())) break;
+    brief = null;
+  }
+  if (!brief) { console.error('  FAILED: the Brief capture never differed from Settings'); app.exit(1); return; }
   const out2 = path.join(__dirname, '..', 'data', 'dashboard-brief.png');
   fs.writeFileSync(out2, brief.toPNG());
   console.log('  saved', out2);

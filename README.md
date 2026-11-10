@@ -43,14 +43,14 @@ such as Cluely, built for client calls, sales calls and consultations.
 
 ### At a glance
 
-| | |
-|---|---|
-| **Cost** | Free and open source (MIT) |
-| **AI** | Your Claude or ChatGPT subscription. No API key needed |
-| **Call apps** | Zoom, Google Meet, Microsoft Teams, Webex, any app that plays sound |
-| **Computers** | Windows 10 and 11, macOS 13 or newer |
-| **Speed** | About 2 to 5 seconds from their last word to the answer on screen, with Claude |
-| **Your data** | Briefs, transcripts and notes stay on your computer |
+<table>
+  <tr><td><b>Cost</b></td><td>Free and open source (MIT)</td></tr>
+  <tr><td><b>AI</b></td><td>Your Claude or ChatGPT subscription. No API key needed</td></tr>
+  <tr><td><b>Call apps</b></td><td>Zoom, Google Meet, Microsoft Teams, Webex, any app that plays sound</td></tr>
+  <tr><td><b>Computers</b></td><td>Windows 10 and 11, macOS 13 or newer</td></tr>
+  <tr><td><b>Speed</b></td><td>About 2 to 5 seconds from their last word to the answer on screen, with Claude</td></tr>
+  <tr><td><b>Your data</b></td><td>Briefs, transcripts and notes stay on your computer</td></tr>
+</table>
 
 ---
 
@@ -119,12 +119,12 @@ such as Cluely, built for client calls, sales calls and consultations.
 
 <table>
   <tr>
-    <td width="58%"><img src="docs/images/dashboard-brief.png" alt="Dashboard: writing the brief before a meeting"></td>
-    <td width="42%"><img src="docs/images/phone.png" alt="The phone view showing the transcript and the answer"></td>
+    <td width="73%"><img src="docs/images/dashboard-brief.png" alt="Dashboard: writing the brief before a meeting"></td>
+    <td width="27%"><img src="docs/images/phone.png" alt="The phone view showing the transcript and the answer"></td>
   </tr>
   <tr>
     <td align="center"><sub>Prepare the meeting: who you are meeting, your goal, your script and prices.</sub></td>
-    <td align="center"><sub>The same answers on your phone, for full-screen sharing.</sub></td>
+    <td align="center"><sub>The phone view, for full-screen sharing.</sub></td>
   </tr>
 </table>
 
