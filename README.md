@@ -104,7 +104,7 @@ You need three free programs. If you already have them, skip ahead.
 | Program | Why | Get it |
 |---|---|---|
 | **Node.js** (version 18 or newer, the "LTS" one) | Runs the app | [nodejs.org](https://nodejs.org) |
-| **Python** (3.10 to 3.12 recommended) | Listens and turns speech into text | [python.org](https://www.python.org/downloads/) |
+| **Python 3.12** (3.10 to 3.13 work) | Listens and turns speech into text | [python.org](https://www.python.org/downloads/) |
 | **Git** (optional) | Downloads this project | [git-scm.com](https://git-scm.com/downloads) |
 
 On Windows, tick **"Add python.exe to PATH"** in the Python installer.
@@ -318,8 +318,12 @@ browser. For ChatGPT: run `codex login`.
 <summary><b>"Python packages are missing" or the setup stops</b></summary>
 
 Run the setup again, it picks up where it stopped. On Windows, make sure Python was
-installed with **"Add python.exe to PATH"** ticked. Python 3.10, 3.11 or 3.12 is the
-safest choice.
+installed with **"Add python.exe to PATH"** ticked.
+
+If the error says **conflicting dependencies**, your Python is newer than the speech
+packages support yet (Python 3.14 on an Intel Mac, for example). Install **Python 3.12**,
+delete the `.venv` folder in the project, and run the setup again. The setup picks
+3.12 by itself when it is installed.
 </details>
 
 <details>
