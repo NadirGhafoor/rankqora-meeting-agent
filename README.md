@@ -20,47 +20,102 @@
 
 ## What is this?
 
-You are on a call with a client. They ask something, and you know the answer, but
-putting it into clear words while they wait is the hard part. Maybe English is not
-your first language, maybe it is a topic you only prepared last night.
+A client asks you something on a call. You know the answer, but turning it into clear
+words while they wait is the hard part, especially in a second language.
 
-Meeting Copilot sits on your screen during the call. It hears the other person,
-understands the meeting from a short brief you write beforehand, and shows you
-**what to say back**, a few seconds after they finish speaking. You read it,
-put it in your own voice, and keep the conversation moving.
+**Meeting Copilot listens to the call and shows you what to say back**, a few seconds
+after they finish speaking. You read it, say it in your own voice, and keep the
+conversation moving. It is a free, open-source alternative to paid AI meeting copilots
+such as Cluely, built for client calls, sales calls and consultations.
 
-It is a free, open-source alternative to paid AI meeting copilots such as Cluely,
-built for client calls, sales calls and consultations. It runs on your own
-computer and uses the Claude or ChatGPT subscription you already pay for, so
-there is no extra monthly fee and no API key needed.
+<table>
+  <tr>
+    <td align="center" width="33%"><b>1. Prepare</b></td>
+    <td align="center" width="33%"><b>2. Listen</b></td>
+    <td align="center" width="33%"><b>3. Answer</b></td>
+  </tr>
+  <tr>
+    <td>Write a short brief: who you are meeting, your goal, your prices and the lines you want to use.</td>
+    <td>Press <b>Start listening</b>. It hears the other person through your computer's sound.</td>
+    <td>When they ask something, the words to say back appear on your private overlay.</td>
+  </tr>
+</table>
+
+### At a glance
+
+| | |
+|---|---|
+| **Cost** | Free and open source (MIT) |
+| **AI** | Your Claude or ChatGPT subscription. No API key needed |
+| **Call apps** | Zoom, Google Meet, Microsoft Teams, Webex, any app that plays sound |
+| **Computers** | Windows 10 and 11, macOS 13 or newer |
+| **Speed** | About 2 to 5 seconds from their last word to the answer on screen, with Claude |
+| **Your data** | Briefs, transcripts and notes stay on your computer |
+
+---
 
 ## Features
 
-- **Live answers.** Hears the other person, decides whether they asked something,
-  and writes a reply in the first person, ready to say.
+<table>
+  <tr>
+    <td valign="top" width="50%">
+
+### 📝 Before the call
+
+- **Meeting brief.** Who you are meeting, your role, your goal, and any material the
+  answers can use: pitch, prices, past results, your CV.
+- **Your own script.** Write the exact lines you want to say. When a question is
+  covered, you get your line back, almost word for word.
+- **"Ask Claude what else it needs."** It asks the 4 to 6 questions whose answers
+  improve the live answers most.
+- **Better spelling of your words.** Names and jargon from the brief are taught to the
+  speech recogniser, so "idempotency" does not come out as "eye-dampitancy".
+
+</td>
+    <td valign="top" width="50%">
+
+### 🎧 During the call
+
+- **Live answers.** Written in the first person, ready to say. With Claude the words
+  appear as they are written.
+- **Answers them, never you.** Their voice comes from your speakers and yours from your
+  microphone, so the two are never mixed up.
+- **No invented facts.** If the brief does not cover a question, it answers only from
+  your facts and will not make up experience, results or prices.
+- **Questions to ask next.** Three short suggestions that move the meeting toward your
+  goal.
+- **Ask box.** Type anything mid-call: "how do I say no politely?"
+
+</td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%">
+
+### 🔒 Private by design
+
 - **Hidden from screen sharing.** Share a window or a tab and the overlay is not in
   what the other side sees.
-- **Answers *them*, never you.** Their voice comes from your speakers and yours from
-  your microphone, so the two are never mixed up.
-- **Follows your prepared script.** Paste your pitch, prices and talking points into
-  the brief. When a question is covered, it gives you your own prepared line. When it
-  is not, it answers only from your facts and will not invent experience, results or
-  prices.
-- **Private notes stay private.** Lines marked `NOTE - DON'T SAY` (your lowest price,
-  a reminder to stop talking) guide the answers but are never shown as words to say.
-- **"Ask Claude what else it needs."** Before the call it asks you the 4 to 6
-  questions whose answers most improve the live answers.
-- **Questions to ask next.** Three short suggestions that move the meeting toward
-  your goal.
-- **Type a question any time.** Ask it directly: "how do I say no politely?"
-- **Read it on your phone instead.** A private page on your Wi-Fi shows the same
-  answers on your phone, so nothing is on screen at all.
-- **After the call.** Summary, decisions, action items and a ready follow-up
-  message, exported to Word (.docx).
-- **Works with Zoom, Google Meet, Microsoft Teams, Webex or any call app**, because it
-  listens to your computer's sound, not to the app.
-- **Speech to text on your own machine** by default. A faster cloud option is there
-  if you want it.
+- **Private notes.** Lines marked `NOTE - DON'T SAY`, like your lowest price, guide the
+  answers but are never shown as words to say.
+- **Phone view.** The same answers on your phone over your own Wi-Fi, so nothing is on
+  screen at all.
+- **Local speech to text.** Runs on your computer by default. A faster cloud option is
+  there if you want it.
+
+</td>
+    <td valign="top" width="50%">
+
+### 📄 After the call
+
+- **Summary.** What was discussed, in a few plain sentences.
+- **Decisions and action items.** Who does what, and by when.
+- **Follow-up message.** A short, friendly message ready to send.
+- **Word export.** Everything above, plus the transcript and your notes, as a `.docx`
+  file.
+
+</td>
+  </tr>
+</table>
 
 <table>
   <tr>
