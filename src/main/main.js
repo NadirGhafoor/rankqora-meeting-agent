@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Meeting Copilot - main process.
+ * RankQora Meeting Agent - main process.
  *
  * Wires together: the Python audio sidecar (what is being said), the Claude
  * brain (what to say back), the glass overlay (where it appears), and the
@@ -136,7 +136,7 @@ function createOverlay() {
     fullscreenable: false,
     maximizable: false,
     minimizable: false,
-    title: 'Meeting Copilot',
+    title: 'RankQora Meeting Agent',
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload', 'overlay.js'),
       contextIsolation: true,
@@ -231,7 +231,7 @@ function createDashboard() {
     height: 780,
     minWidth: 900,
     minHeight: 600,
-    title: 'Meeting Copilot - Dashboard',
+    title: 'RankQora Meeting Agent - Dashboard',
     backgroundColor: '#0b0d12',
     autoHideMenuBar: true,
     webPreferences: {
@@ -494,7 +494,7 @@ function wireBrain() {
   });
 
   brain.on('auth-error', (msg) => {
-    const help = 'Claude Code is signed in inside the Claude Desktop app, but that session lives in the app itself - a separate program cannot use it. Open a terminal, run  claude  , sign in there once, then restart Meeting Copilot.';
+    const help = 'Claude Code is signed in inside the Claude Desktop app, but that session lives in the app itself - a separate program cannot use it. Open a terminal, run  claude  , sign in there once, then restart RankQora Meeting Agent.';
     toOverlay('error', { where: 'brain', message: help, detail: msg });
     toDashboard('error', { where: 'brain', message: help, detail: msg });
   });
@@ -882,7 +882,7 @@ async function runDoctor() {
       : { ok: false, detail: 'OpenAI API is the brain, but no API key is set. Add it under Brain & speech.' };
   } else {
     out.claude = brain?.authError
-      ? { ok: false, detail: 'Claude is not signed in for this app. Open a terminal, run  claude , type  /login  inside it and finish in the browser, then restart Meeting Copilot.' }
+      ? { ok: false, detail: 'Claude is not signed in for this app. Open a terminal, run  claude , type  /login  inside it and finish in the browser, then restart RankQora Meeting Agent.' }
       : { ok: true, detail: 'Checked when a meeting starts.' };
   }
 

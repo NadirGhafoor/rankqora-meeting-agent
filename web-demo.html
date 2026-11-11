@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RankQora Meeting Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#14171f; --muted:#5d6577; --line:#e3e6ec;
+    --brand:#1f5eff; --brand-ink:#ffffff; --brand-soft:#e8efff;
+    --say:#0f7b4f; --say-soft:#e7f6ef; --tip:#8a5a00; --tip-soft:#fff5df;
+    --them:#1f5eff; --me:#0f7b4f; --danger:#b42318; --radius:12px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#0f1218; --panel:#171b23; --ink:#e9ecf2; --muted:#9aa3b5; --line:#2a303c;
+      --brand:#5b8cff; --brand-soft:#1c2740; --say:#3ccf91; --say-soft:#13261f; --tip:#f0b84a; --tip-soft:#2a2214;
+      --them:#7aa2ff; --me:#3ccf91; --danger:#ff7b72; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:15px}
+  .logo small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+  nav{display:flex;gap:6px;flex-wrap:wrap}
+  nav button{border:1px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:14px}
+  nav button.on{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+  main{max-width:1180px;margin:0 auto;padding:22px}
+  .tab{display:none}.tab.on{display:block}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  h2{font-size:18px;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 16px;font-size:14px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:12px}
+  input,textarea,select{display:block;width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+  textarea{resize:vertical}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 15px;border-radius:9px;cursor:pointer;font:inherit;font-size:14px;font-weight:600}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.mic.live{background:var(--danger);border-color:var(--danger);color:#fff}
+  .ok{color:var(--say);font-size:13px;font-weight:600}
+  .banner{display:none;padding:12px 14px;border-radius:9px;background:var(--tip-soft);color:var(--tip);margin-bottom:16px;font-size:14px}
+  .live{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+  #feed{height:380px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+  .msg{padding:9px 12px;border-radius:10px;max-width:92%;font-size:14px}
+  .msg b{display:block;font-size:11px;letter-spacing:.06em;margin-bottom:2px}
+  .msg.them{background:var(--brand-soft);align-self:flex-start}.msg.them b{color:var(--them)}
+  .msg.me{background:var(--say-soft);align-self:flex-end}.msg.me b{color:var(--me)}
+  .empty{color:var(--muted);font-size:14px;margin:auto;text-align:center;max-width:300px}
+  .say{background:var(--say-soft);border-left:4px solid var(--say);border-radius:10px;padding:14px 16px;font-size:17px;line-height:1.55;min-height:90px;white-space:pre-wrap}
+  .lbl{font-size:11px;letter-spacing:.08em;font-weight:700;color:var(--muted);margin:14px 0 6px}
+  .lbl.say-l{color:var(--say);margin-top:0}
+  .tip{background:var(--tip-soft);color:var(--tip);border-radius:10px;padding:10px 14px;font-size:14px;white-space:pre-wrap}
+  .nextq button{display:block;width:100%;text-align:left;margin-bottom:6px;font-weight:500}
+  .sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:16px}
+  .sumgrid h3{font-size:15px;margin:0 0 8px}
+  ul{margin:0;padding-left:20px}
+  .phase{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+  .phase .ph{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+  .phase .tl{color:var(--brand);font-size:13px;font-weight:600;white-space:nowrap}
+  .phase .dl{margin-top:6px;font-size:13px;color:var(--muted)}
+  .hint{color:var(--muted);font-size:13px}
+  .spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px}
+  @keyframes s{to{transform:rotate(360deg)}}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+  @media (max-width:860px){.live,.sumgrid,.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="mark">RQ</div><div>RankQora Meeting Agent<small>Live answers and client roadmaps for sales calls</small></div></div>
+  <nav>
+    <button data-tab="brief" class="on">1. Brief</button>
+    <button data-tab="live">2. Live call</button>
+    <button data-tab="sum">3. Summary &amp; roadmap</button>
+  </nav>
+</header>
+
+<main>
+  <div id="banner" class="banner"></div>
+
+  <!-- BRIEF -->
+  <section id="tab-brief" class="tab on">
+    <div class="card">
+      <h2>Before the call: the brief</h2>
+      <p class="sub">The agent answers from this first. Fill in your real prices and results. Lines marked <b>NOTE - DON'T SAY</b> guide the answers but are never read out.</p>
+      <div class="grid2">
+        <label>Client business name<input id="client" placeholder="e.g. Smile Dental Clinic"></label>
+        <label>Business type<input id="niche" placeholder="e.g. dentist, plumber, movers"></label>
+        <label>City / country<input id="city" placeholder="e.g. Toronto, Canada"></label>
+        <label>Who I'm talking to<input id="otherSide" placeholder="e.g. the owner"></label>
+      </div>
+      <label>Goal of this call<input id="goal" placeholder="e.g. they agree to a free audit, then a monthly Local SEO package"></label>
+      <label>My prepared material (services, prices, results, script)<textarea id="material" rows="14"></textarea></label>
+      <div class="row">
+        <button class="btn primary" id="saveBrief">Save brief</button>
+        <button class="btn" id="resetBrief">Reset to RankQora template</button>
+        <span id="savedMsg" class="ok" hidden>Saved</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE -->
+  <section id="tab-live" class="tab">
+    <div class="live">
+      <div class="card">
+        <h2>Conversation</h2>
+        <p class="sub">Use the mic or type what the client said, then press <b>Get answer</b>. Testing alone? Press <b>Simulate a client</b>.</p>
+        <div id="feed"><div class="empty" id="emptyFeed">Nothing yet. Start with a client question, or let the simulator ask one.</div></div>
+        <label style="margin-top:14px">Client said
+          <textarea id="themInput" rows="2" placeholder="e.g. How long until we show up on Google Maps?"></textarea>
+        </label>
+        <div class="row">
+          <button class="btn primary" id="answerBtn">Get answer</button>
+          <button class="btn mic" id="micBtn" hidden>🎤 Mic</button>
+          <button class="btn" id="simBtn">🎭 Simulate a client</button>
+          <select id="persona" style="width:auto;margin:0">
+            <option value="curious">Curious owner</option>
+            <option value="skeptical">Skeptical, burned by SEO before</option>
+            <option value="price">Price-focused</option>
+            <option value="busy">Busy, wants it short</option>
+          </select>
+        </div>
+        <label style="margin-top:14px">What I actually said <span class="hint">(optional, keeps the record accurate)</span>
+          <textarea id="meInput" rows="2" placeholder="Type your own reply, or press 'I said this' on the answer"></textarea>
+        </label>
+        <div class="row"><button class="btn" id="meBtn">Add my reply</button><button class="btn" id="clearBtn">Clear call</button></div>
+      </div>
+
+      <div class="card">
+        <div class="lbl say-l">SAY THIS</div>
+        <div class="say" id="say"><span class="hint">The suggested answer appears here.</span></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" id="saidBtn" disabled>✓ I said this</button>
+          <button class="btn" id="againBtn" disabled>↻ Another version</button>
+        </div>
+        <div class="lbl">QUESTIONS YOU COULD ASK NEXT</div>
+        <div class="nextq" id="nextq"><span class="hint">Three follow-up questions appear here.</span></div>
+        <div class="lbl">COACH TIP (ROMAN URDU)</div>
+        <div class="tip" id="tip">Har jawab ke saath ek chhota sa tip yahan aayega: ye jawab kyun kaam karta hai.</div>
+        <div class="lbl">ASK THE AGENT ANYTHING</div>
+        <div class="row">
+          <input id="askInput" style="flex:1;margin:0" placeholder="e.g. How do I say no to a discount politely?">
+          <button class="btn" id="askBtn">Ask</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="tab-sum" class="tab">
+    <div class="card">
+      <h2>After the call: summary &amp; client roadmap</h2>
+      <p class="sub">Builds a summary, action items, a follow-up message and a phase-by-phase roadmap, only from what was said and your brief.</p>
+      <div class="row">
+        <button class="btn primary" id="sumBtn">Generate summary &amp; roadmap</button>
+        <button class="btn" id="copyRoad" disabled>Copy roadmap</button>
+        <button class="btn" id="copyFollow" disabled>Copy follow-up message</button>
+        <span id="copyMsg" class="ok" hidden>Copied</span>
+      </div>
+      <div id="sumOut"><p class="hint" style="margin-top:16px">No summary yet.</p></div>
+    </div>
+  </section>
+</main>
+<footer>RankQora Meeting Agent · Tell clients you use a note-taking tool before you record or transcribe a call.</footer>
+
+<script>
+const TEMPLATE = `ABOUT RANKQORA
+RankQora is a Local SEO and website design agency. We help local businesses get found on Google Maps and Google Search and turn that traffic into calls and bookings. We work with clients in the USA, UK, Canada and Dubai.
+Services: Google Business Profile optimisation, local SEO, citation building, on-page SEO, SEO-friendly website design, review strategy, Google Ads and Meta Ads.
+Founder: Nadir Ghafoor.
+
+PAST CLIENTS (only say what is written here)
+- The Willows, London — [service + real result]
+- Limitless Construction, Toronto — [service + real result]
+- Private Chauffeur Dubai — [service + real result]
+- MJC Movers & Storage, USA — [service + real result]
+NOTE - DON'T SAY: never quote a number that is not written above.
+
+1. WHAT DO YOU DO?
+▶ SAY "We help local businesses show up in the Google Map pack and on Google Search when nearby customers are searching, and we make sure the website turns those visitors into calls."
+
+2. HOW LONG UNTIL RESULTS?
+▶ SAY "Google Business Profile fixes often show movement in the first 4 to 8 weeks. Stronger local rankings usually build over 3 to 6 months, depending on competition in your area."
+NOTE - DON'T SAY: never guarantee the number one position.
+
+3. PRICING
+▶ SAY "Our Local SEO package is [PRICE] per month. A new SEO-friendly website is [PRICE] one-time. We start with a free audit so you can see exactly what needs fixing first."
+NOTE - DON'T SAY: my lowest price is [FLOOR]. Only offer it if they push twice.
+
+4. "CAN YOU GUARANTEE NUMBER ONE?"
+▶ SAY "Honestly, nobody can guarantee a fixed position, and anyone who does is a red flag. What we guarantee is the work: a fully optimised profile, clean citations, monthly reports and clear progress in calls and rankings."
+
+5. "WE TRIED SEO BEFORE AND IT DIDN'T WORK"
+▶ SAY "That's common. Usually the profile categories, reviews or local signals were never fixed properly. We start with an audit and show you exactly what was missed before you pay for anything."
+
+6. REPORTING
+▶ SAY "You get a simple monthly report: rankings in your area, calls and direction requests from your Google profile, and what we did that month."
+
+7. NEXT STEP
+▶ SAY "The best next step is a free audit of your Google profile and website. I can send it within 2-3 days, and then we decide together what to fix first."
+
+NOTE - DON'T SAY: never promise fake reviews, review gating, or keyword-stuffed business names. They break Google's rules.`;
+
+const $ = (id) => document.getElementById(id);
+const use = (n) => (window.claude && claude.use ? claude.use(n) : Promise.resolve(null));
+const FIELDS = ['client','niche','city','otherSide','goal','material'];
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem('rq_'+k)); } catch { return null; } },
+  set(k,v){ try { localStorage.setItem('rq_'+k, JSON.stringify(v)); } catch {} },
+};
+
+// ---------- tabs ----------
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + b.dataset.tab));
+});
+
+// ---------- brief ----------
+function loadBrief(){
+  const b = store.get('brief') || {};
+  FIELDS.forEach(f => $(f).value = b[f] ?? (f === 'material' ? TEMPLATE : ''));
+}
+function brief(){ const b = {}; FIELDS.forEach(f => b[f] = $(f).value.trim()); return b; }
+$('saveBrief').onclick = () => { store.set('brief', brief()); $('savedMsg').hidden = false; setTimeout(() => $('savedMsg').hidden = true, 1500); };
+$('resetBrief').onclick = () => { $('material').value = TEMPLATE; };
+loadBrief();
+
+function briefText(){
+  const b = brief();
+  return [
+    'I am Nadir Ghafoor, founder of RankQora (Local SEO and web design agency).',
+    b.client && `Client business: ${b.client}`, b.niche && `Business type: ${b.niche}`,
+    b.city && `Location: ${b.city}`, b.otherSide && `Talking to: ${b.otherSide}`,
+    b.goal && `My goal for this call: ${b.goal}`,
+  ].filter(Boolean).join('\n') + '\n\nMY PREPARED MATERIAL:\n' + (b.material || '(none)');
+}
+
+// ---------- conversation ----------
+let turns = store.get('turns') || [];
+function renderFeed(){
+  const feed = $('feed'); feed.innerHTML = '';
+  if (!turns.length){ feed.innerHTML = '<div class="empty">Nothing yet. Start with a client question, or let the simulator ask one.</div>'; return; }
+  for (const t of turns){
+    const d = document.createElement('div'); d.className = 'msg ' + t.role;
+    const b = document.createElement('b'); b.textContent = t.role === 'them' ? 'CLIENT' : 'ME';
+    d.appendChild(b); d.appendChild(document.createTextNode(t.text)); feed.appendChild(d);
+  }
+  feed.scrollTop = feed.scrollHeight;
+}
+function addTurn(role, text){ text = (text||'').trim(); if (!text) return; turns.push({role, text}); store.set('turns', turns); renderFeed(); }
+function transcript(n = 14){ return turns.slice(-n).map(t => (t.role === 'them' ? 'CLIENT: ' : 'ME: ') + t.text).join('\n'); }
+renderFeed();
+
+$('meBtn').onclick = () => { addTurn('me', $('meInput').value); $('meInput').value = ''; };
+$('clearBtn').onclick = () => { turns = []; store.set('turns', turns); renderFeed(); resetAnswer(); };
+
+// ---------- AI ----------
+let sample = null;
+use('sample').then(s => {
+  sample = s;
+  if (!s) showBanner('The AI is not available in this view. Open this page on claude.ai while signed in to use the live answers.');
+});
+function showBanner(t){ const b = $('banner'); b.textContent = t; b.style.display = 'block'; }
+function aiError(e){
+  if (e?.code === 'not_granted') showBanner('AI access was not allowed. Reload the page and press Allow when asked.');
+  else if (e?.code === 'rate_limited') showBanner('Too many requests just now. Wait a few seconds and try again.');
+  else showBanner('Something went wrong: ' + (e?.message || e));
+}
+let ctrl = null;
+function busy(on){ ['answerBtn','simBtn','askBtn','againBtn','sumBtn'].forEach(id => $(id).disabled = on); }
+
+const RULES = `RULES
+- Write what I (Nadir) should SAY next, in the first person, as natural spoken English: 2-4 short sentences, simple words, confident and friendly.
+- Use my prepared material FIRST. If it has a ▶ SAY line that fits, reuse it almost word for word, adapted to the question.
+- Never invent prices, results, client names, numbers, guarantees or deadlines that are not in my material. If a price shows as [PRICE] or is missing, offer to send exact pricing after the free audit instead of a number.
+- Lines marked NOTE or DON'T SAY are private: let them guide you, but never say their content.
+- Never promise a #1 ranking, fake reviews, or anything against Google's guidelines.
+- Answer the CLIENT's latest question, not mine.`;
+
+let lastQuestion = '';
+function resetAnswer(){
+  $('say').innerHTML = '<span class="hint">The suggested answer appears here.</span>';
+  $('nextq').innerHTML = '<span class="hint">Three follow-up questions appear here.</span>';
+  $('tip').textContent = 'Har jawab ke saath ek chhota sa tip yahan aayega: ye jawab kyun kaam karta hai.';
+  $('saidBtn').disabled = $('againBtn').disabled = true;
+}
+function parseAnswer(text){
+  const get = (tag, next) => {
+    const re = new RegExp(tag + ':\\s*([\\s\\S]*?)' + (next ? '(?=\\n\\s*' + next + ':|$)' : '$'));
+    const m = text.match(re); return m ? m[1].trim() : '';
+  };
+  return { say: get('SAY','NEXT'), next: get('NEXT','TIP'), tip: get('TIP') };
+}
+function renderAnswer(p, done){
+  $('say').textContent = p.say || '…';
+  const qs = p.next.split('\n').map(s => s.replace(/^[-*\d.\s]+/,'').trim()).filter(Boolean).slice(0,3);
+  const nq = $('nextq'); nq.innerHTML = '';
+  if (qs.length) qs.forEach(q => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = q;
+    b.title = 'Click to log that you asked this'; b.onclick = () => addTurn('me', q); nq.appendChild(b); });
+  else nq.innerHTML = '<span class="hint">' + (done ? '—' : 'Writing…') + '</span>';
+  if (p.tip) $('tip').textContent = p.tip;
+}
+
+async function getAnswer(question, variant){
+  if (!sample) return showBanner('The AI is not available in this view.');
+  question = (question || '').trim(); if (!question) { $('themInput').focus(); return; }
+  lastQuestion = question;
+  if (ctrl) ctrl.abort(); ctrl = new AbortController();
+  busy(true); $('say').innerHTML = '<span class="spin"></span>'; $('tip').textContent = '…';
+  const prompt = `You are my live meeting copilot on a sales call with a potential Local SEO client.
+
+${briefText()}
+
+${RULES}
+
+CONVERSATION SO FAR:
+${transcript() || '(just started)'}
+
+CLIENT'S LATEST QUESTION: "${question}"
+${variant ? '\nGive a DIFFERENT version from the usual answer: another angle, same facts.\n' : ''}
+Reply in EXACTLY this format, nothing else:
+SAY: <what I should say>
+NEXT:
+- <smart question I could ask next, under 14 words>
+- <another>
+- <another>
+TIP: <one or two short sentences in simple Roman Urdu explaining why this answer works or what to be careful about>`;
+  try {
+    const r = await sample(prompt, { signal: ctrl.signal, cache: false,
+      onText: ({text}) => renderAnswer(parseAnswer(text), false) });
+    renderAnswer(parseAnswer(r.text), true);
+    $('saidBtn').disabled = $('againBtn').disabled = false;
+  } catch (e) { if (e?.name !== 'AbortError') aiError(e); }
+  finally { busy(false); }
+}
+
+$('answerBtn').onclick = () => {
+  const q = $('themInput').value.trim(); if (!q) { $('themInput').focus(); return; }
+  addTurn('them', q); $('themInput').value = ''; getAnswer(q);
+};
+$('themInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('answerBtn').click(); } });
+$('againBtn').onclick = () => getAnswer(lastQuestion, true);
+$('saidBtn').onclick = () => { addTurn('me', $('say').textContent); $('saidBtn').disabled = true; };
+
+// simulator: the AI plays the client so you can practise alone
+const PERSONAS = {
+  curious: 'a curious, friendly business owner who knows little about SEO',
+  skeptical: 'a skeptical owner who paid an SEO agency before and saw no results',
+  price: 'an owner focused on cost who keeps asking about price and discounts',
+  busy: 'a busy owner who wants short, direct answers',
+};
+$('simBtn').onclick = async () => {
+  if (!sample) return showBanner('The AI is not available in this view.');
+  const b = brief(); busy(true);
+  try {
+    const r = await sample(`Role-play a potential client on a sales call with a Local SEO agency called RankQora.
+You are ${PERSONAS[$('persona').value]}. Your business: ${b.client || 'a local business'}${b.niche ? ' ('+b.niche+')' : ''}${b.city ? ' in '+b.city : ''}.
+Conversation so far:
+${transcript() || '(the call just started)'}
+
+Say your NEXT line to the agency: one realistic question or objection, 1-2 sentences, spoken style. Do not repeat earlier questions. Output only the line, no quotes, no name.`,
+      { cache: false, modelTier: 'quick' });
+    const q = r.text.trim().replace(/^["']|["']$/g, '');
+    addTurn('them', q); busy(false); getAnswer(q);
+  } catch (e) { aiError(e); busy(false); }
+};
+
+$('askBtn').onclick = async () => {
+  const q = $('askInput').value.trim(); if (!q || !sample) return;
+  busy(true); $('say').innerHTML = '<span class="spin"></span>';
+  try {
+    const r = await sample(`I'm on a live sales call. ${briefText()}\n\nConversation so far:\n${transcript() || '(none)'}\n\nMy private question to you: ${q}\n\nAnswer in 2-4 short sentences I can use right now. Follow these rules:\n${RULES}`,
+      { cache: false, onText: ({text}) => $('say').textContent = text });
+    $('say').textContent = r.text.trim(); $('askInput').value = '';
+  } catch (e) { aiError(e); } finally { busy(false); }
+};
+$('askInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('askBtn').click(); });
+
+// mic: speech to text for what the client says
+let dict = null, listening = false;
+use('dictation').then(d => {
+  dict = d; if (!d) return;
+  $('micBtn').hidden = false;
+  d.onPartial(({text}) => { $('themInput').placeholder = text || 'Listening…'; });
+  d.onFinal(({text}) => { const v = $('themInput').value; $('themInput').value = (v ? v + ' ' : '') + text; $('themInput').placeholder = 'Listening…'; });
+  d.onState(({state}) => {
+    listening = state === 'listening';
+    $('micBtn').classList.toggle('live', listening);
+    $('micBtn').textContent = listening ? '■ Stop mic' : '🎤 Mic';
+    if (!listening) $('themInput').placeholder = 'e.g. How long until we show up on Google Maps?';
+  });
+});
+$('micBtn').onclick = () => {
+  if (!dict) return;
+  if (listening) { dict.stop().catch(() => {}); return; }
+  dict.start().catch(e => { if (e?.code === 'not_granted') { $('micBtn').hidden = true; showBanner('Microphone not allowed. You can still type what the client says.'); } });
+};
+
+// ---------- summary + roadmap ----------
+let lastSummary = store.get('summary');
+function esc(s){ return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function list(arr){ return Array.isArray(arr) && arr.length ? '<ul>' + arr.map(x => '<li>' + esc(typeof x === 'string' ? x : `${x.who === 'me' ? 'Me' : x.who === 'them' ? 'Client' : (x.who||'')}: ${x.what||''}${x.due ? ' ('+x.due+')' : ''}`) + '</li>').join('') + '</ul>' : '<p class="hint">None.</p>'; }
+function renderSummary(s){
+  if (!s) return;
+  const road = Array.isArray(s.roadmap) && s.roadmap.length
+    ? s.roadmap.map((p,i) => `<div class="phase"><div class="ph"><span>${i+1}. ${esc(p.phase)}</span><span class="tl">${esc(p.timeline||'')}</span></div>
+        ${list(p.steps)}${p.deliverable ? `<div class="dl">Deliverable: ${esc(p.deliverable)}</div>` : ''}</div>`).join('')
+    : '<p class="hint">No project was discussed, so there is no roadmap.</p>';
+  $('sumOut').innerHTML = `<div class="sumgrid">
+    <div><h3>Summary</h3><p>${esc(s.summary)}</p><h3>Key points</h3>${list(s.keyPoints)}
+      <h3 style="margin-top:14px">Action items</h3>${list(s.actionItems)}
+      <h3 style="margin-top:14px">Follow-up message</h3><div class="tip" style="background:var(--brand-soft);color:var(--ink)">${esc(s.followUp)}</div></div>
+    <div><h3>Client roadmap</h3>${road}</div></div>`;
+  $('copyRoad').disabled = !(s.roadmap && s.roadmap.length); $('copyFollow').disabled = !s.followUp;
+}
+renderSummary(lastSummary);
+
+$('sumBtn').onclick = async () => {
+  if (!sample) return showBanner('The AI is not available in this view.');
+  if (!turns.length) { $('sumOut').innerHTML = '<p class="hint" style="margin-top:16px">Nothing was said yet. Have a conversation in the Live call tab first.</p>'; return; }
+  busy(true); $('sumOut').innerHTML = '<p class="hint" style="margin-top:16px"><span class="spin"></span> Writing the summary and roadmap…</p>';
+  try {
+    const s = await sample.json(`You write concise, accurate meeting notes for a Local SEO agency. Never invent anything that is not in the transcript or brief.
+
+${briefText()}
+
+TRANSCRIPT (ME = Nadir from RankQora, CLIENT = the other side):
+${transcript(200)}
+
+Return ONLY valid JSON with exactly these keys:
+{"summary": "3-5 sentence plain-English summary",
+ "keyPoints": ["..."],
+ "actionItems": [{"who": "me|them", "what": "...", "due": ""}],
+ "followUp": "a short friendly follow-up message Nadir can send the client",
+ "roadmap": [{"phase": "short phase name", "timeline": "e.g. Week 1-2, or empty if not discussed", "steps": ["concrete task"], "deliverable": "what the client gets"}]}
+For roadmap: lay out the work discussed as 2-6 ordered phases (for example audit, Google Business Profile setup, citations, website fixes, reviews, reporting). Base it only on the transcript and brief. Never invent prices, guarantees or deadlines. If no project was discussed, return an empty array.`, { cache: false });
+    lastSummary = s; store.set('summary', s); renderSummary(s);
+  } catch (e) { aiError(e); $('sumOut').innerHTML = '<p class="hint" style="margin-top:16px">Could not generate. Try again.</p>'; }
+  finally { busy(false); }
+};
+
+async function copy(text){
+  try { await navigator.clipboard.writeText(text); $('copyMsg').hidden = false; setTimeout(() => $('copyMsg').hidden = true, 1500); }
+  catch { showBanner('Copy was blocked by the browser. Select the text and copy it by hand.'); }
+}
+$('copyFollow').onclick = () => lastSummary && copy(lastSummary.followUp || '');
+$('copyRoad').onclick = () => lastSummary && copy((lastSummary.roadmap||[]).map((p,i) =>
+  `${i+1}. ${p.phase}${p.timeline ? ' ('+p.timeline+')' : ''}\n` + (p.steps||[]).map(s => '   - ' + s).join('\n') + (p.deliverable ? `\n   Deliverable: ${p.deliverable}` : '')).join('\n\n'));
+</script>
+</body>
+</html>

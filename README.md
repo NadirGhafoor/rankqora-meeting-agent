@@ -1,6 +1,33 @@
 <div align="center">
 
-# AI Meeting Assistant Copilot
+# RankQora Meeting Agent
+
+**Live answers and client roadmaps for RankQora sales calls.**
+Built by [RankQora](https://rankqora.com) on top of the open-source
+[AI Meeting Assistant Copilot](https://github.com/tanzeeldevAi/ai-meeting-assistant-copilot) by Tanzeel (MIT).
+
+</div>
+
+## What RankQora added
+
+| Feature | What it does |
+|---|---|
+| **Client roadmap** | After the call, "Generate summary" also builds a phase-by-phase plan (audit, Google Business Profile, citations, website, reporting) with timelines, steps and deliverables, in the dashboard and in the Word export. It only uses what was said on the call, never invented prices or deadlines. |
+| **RankQora brief** | [`RANKQORA-BRIEF.md`](RANKQORA-BRIEF.md): ready answers for the questions Local SEO clients ask most (results timeline, pricing, "guarantee #1?", "SEO didn't work before"). |
+| **Web demo** | [`web-demo.html`](web-demo.html): the same idea in the browser, with a client simulator for practice and Roman Urdu coaching tips. Runs as a claude.ai artifact. |
+| **Roman Urdu setup guide** | [`SETUP-GUIDE-URDU.md`](SETUP-GUIDE-URDU.md): step-by-step install for beginners. |
+
+**Quick start (Windows):** install Node.js and Python 3.12, sign in to Claude once (`claude` then `/login`),
+then double-click `SETUP.bat`, `CHECK.bat` and `START.bat`. Full steps: [`SETUP-GUIDE-URDU.md`](SETUP-GUIDE-URDU.md).
+
+---
+
+<details>
+<summary><b>Original project documentation</b></summary>
+
+<div align="center">
+
+## AI Meeting Assistant Copilot
 
 **An open-source AI meeting assistant for Zoom, Google Meet and Teams. It listens to the call and writes what to say back on a private overlay that screen sharing does not show. Runs on the Claude or ChatGPT subscription you already have.**
 
@@ -473,3 +500,5 @@ MIT. See [LICENSE](LICENSE).
 <br><br>
 <sub>AI meeting assistant · meeting copilot · real-time meeting assistant · AI note taker · Zoom AI assistant · Google Meet AI assistant · Microsoft Teams · live transcription · Whisper speech to text · Claude · ChatGPT · Codex CLI · open-source Cluely alternative · Electron desktop app for Windows and macOS</sub>
 </div>
+
+</details>

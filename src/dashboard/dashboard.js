@@ -268,6 +268,28 @@ function renderSummary(s) {
   add('Action items', s.actionItems);
   add('Questions raised', s.questionsRaised);
   add('Suggested follow-up', s.followUp);
+  renderRoadmap(box, s.roadmap);
+}
+
+/** Client roadmap: numbered phases, each with its timeline, steps and deliverable. */
+function renderRoadmap(box, roadmap) {
+  if (!Array.isArray(roadmap) || !roadmap.length) return;
+  const h = document.createElement('h3'); h.textContent = 'Client roadmap'; box.appendChild(h);
+  roadmap.forEach((ph, i) => {
+    if (!ph || typeof ph !== 'object') return;
+    const head = document.createElement('div'); head.className = 't';
+    head.style.fontWeight = '600';
+    head.textContent = `${i + 1}. ${ph.phase || 'Phase'}${ph.timeline ? ' (' + ph.timeline + ')' : ''}`;
+    box.appendChild(head);
+    for (const st of (Array.isArray(ph.steps) ? ph.steps : [])) {
+      const d = document.createElement('div'); d.className = 't'; d.style.paddingLeft = '14px';
+      d.textContent = '• ' + st; box.appendChild(d);
+    }
+    if (ph.deliverable) {
+      const d = document.createElement('div'); d.className = 't'; d.style.paddingLeft = '14px';
+      d.textContent = 'Deliverable: ' + ph.deliverable; box.appendChild(d);
+    }
+  });
 }
 
 $('summariseBtn').onclick = async () => {
@@ -529,7 +551,7 @@ api.on('share', (s) => {
   } else { hideErr(); }
 });
 api.on('share-hidden', (m) => { if (m && m.reason) showErr(m.reason); });
-api.on('state', (s) => { setLive(s.listening); refreshCompanion(); if (s.authError) showErr('Claude is not signed in for this app. Open a terminal, run  claude , type  /login  inside it and finish in the browser, then restart Meeting Copilot.'); });
+api.on('state', (s) => { setLive(s.listening); refreshCompanion(); if (s.authError) showErr('Claude is not signed in for this app. Open a terminal, run  claude , type  /login  inside it and finish in the browser, then restart RankQora Meeting Agent.'); });
 api.on('error', (e) => showErr(e.message || 'Error'));
 api.on('turn', (t) => { appendTurn(t); if (current) (current.transcript = current.transcript || []).push(t); });
 api.on('devices', (m) => { $('devices').textContent = m.loopback ? `hearing: ${m.loopback}   |   mic: ${m.mic || 'none'}` : 'No speaker loopback found.'; });

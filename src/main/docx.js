@@ -75,6 +75,15 @@ async function exportMeeting(m) {
     }
     if (s.questionsRaised?.length) { kids.push(H('Questions raised')); s.questionsRaised.forEach((x) => kids.push(Bullet(x))); }
     if (s.followUp) { kids.push(H('Suggested follow-up')); kids.push(P(s.followUp, { italics: true })); }
+    if (Array.isArray(s.roadmap) && s.roadmap.length) {
+      kids.push(H('Client roadmap'));
+      s.roadmap.forEach((ph, i) => {
+        if (!ph || typeof ph !== 'object') return;
+        kids.push(P(`${i + 1}. ${ph.phase || 'Phase'}${ph.timeline ? ` (${ph.timeline})` : ''}`, { bold: true }));
+        (Array.isArray(ph.steps) ? ph.steps : []).forEach((x) => kids.push(Bullet(x)));
+        if (ph.deliverable) kids.push(P(`Deliverable: ${ph.deliverable}`, { italics: true }));
+      });
+    }
   }
 
   if (m.notes?.length) { kids.push(H('Notes')); m.notes.forEach((n) => kids.push(Bullet(n.text))); }
@@ -96,7 +105,7 @@ async function exportMeeting(m) {
   }
 
   const doc = new Document({
-    creator: 'Meeting Copilot',
+    creator: 'RankQora Meeting Agent',
     title,
     styles: { default: { document: { run: { font: 'Calibri', size: 22 } } } },
     sections: [{ properties: {}, children: kids }],

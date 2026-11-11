@@ -400,6 +400,21 @@ async function clarifyBrief(brief, settings = {}) {
   return { ok: true, questions: Array.isArray(list) ? list.filter((x) => typeof x === 'string').slice(0, 8) : [] };
 }
 
+/** The client roadmap asked for in every summary: the agreed work, phase by phase.
+    Only uses what was actually discussed, so it never promises things nobody said. */
+const ROADMAP_KEY = [
+  ' "roadmap": [{"phase": "short phase name", "timeline": "e.g. Week 1-2, or empty if not discussed",',
+  '   "steps": ["concrete task", "..."], "deliverable": "what the client gets at the end of this phase"}]}',
+  'For "roadmap": lay out the work my person and the client discussed as 2-6 ordered phases',
+  '(for example audit, setup, optimisation, reporting). Base it ONLY on the transcript and brief:',
+  'never invent prices, guarantees or deadlines that were not said. If no project was discussed,',
+  'return an empty array.',
+].join('\n');
+
+const MOCK_ROADMAP = [
+  { phase: 'Audit', timeline: 'Week 1', steps: ['Mock step'], deliverable: 'Mock audit report' },
+];
+
 /** After the meeting: summary, decisions, action items. Works with no live session. */
 async function summariseTranscript(transcript, brief, settings = {}) {
   const body = (transcript || []).map((t) => `${t.role === 'me' ? 'ME' : 'THEM'}: ${t.text}`).join('\n');
@@ -417,7 +432,8 @@ async function summariseTranscript(transcript, brief, settings = {}) {
     ' "decisions": ["..."],',
     ' "actionItems": [{"who": "me|them", "what": "...", "due": ""}],',
     ' "questionsRaised": ["..."],',
-    ' "followUp": "a short friendly follow-up message my person could send"}',
+    ' "followUp": "a short friendly follow-up message my person could send"',
+    ROADMAP_KEY,
   ].filter(Boolean).join('\n');
 
   const r = await askOnce(system, user, {
@@ -425,7 +441,7 @@ async function summariseTranscript(transcript, brief, settings = {}) {
     mockText: JSON.stringify({
       summary: 'Mock summary - sign in to Claude for a real one.',
       keyPoints: ['Mock key point'], decisions: [], actionItems: [],
-      questionsRaised: [], followUp: 'Mock follow-up.',
+      questionsRaised: [], followUp: 'Mock follow-up.', roadmap: MOCK_ROADMAP,
     }),
   });
   if (!r.ok) return r;
@@ -794,7 +810,8 @@ class Brain extends EventEmitter {
       ' "decisions": ["..."],',
       ' "actionItems": [{"who": "me|them", "what": "...", "due": "" }],',
       ' "questionsRaised": ["..."],',
-      ' "followUp": "a short friendly follow-up message my person could send"}',
+      ' "followUp": "a short friendly follow-up message my person could send"',
+      ROADMAP_KEY,
     ].join('\n'));
     return id;
   }
@@ -810,7 +827,7 @@ class Brain extends EventEmitter {
       summary: JSON.stringify({
         summary: 'Mock summary. Enable a real Claude login to generate this properly.',
         keyPoints: ['Mock key point'], decisions: [], actionItems: [],
-        questionsRaised: [], followUp: 'Mock follow-up message.',
+        questionsRaised: [], followUp: 'Mock follow-up message.', roadmap: MOCK_ROADMAP,
       }),
     }[kind] || 'Mock response.';
 
