@@ -172,9 +172,30 @@ function meetingPath(id) {
   return path.join(MEETINGS, `${id}.json`);
 }
 
+/** Carry the prepared material into every new meeting, so it is never retyped:
+    the most recent meeting's brief, or else the RankQora default brief. */
+function prefillBrief(m) {
+  const prev = listMeetings().map((x) => getMeeting(x.id)).find((x) => x?.brief?.background?.trim());
+  if (prev) {
+    const { kind, role, goal, background, terms } = prev.brief;
+    Object.assign(m.brief, { kind, role, goal, background, terms: terms || [] });
+    return m;
+  }
+  try {
+    const def = fs.readFileSync(path.join(__dirname, '..', '..', 'rankqora-default-brief.txt'), 'utf8');
+    Object.assign(m.brief, {
+      role: 'Founder of RankQora, a Local SEO and website design agency',
+      goal: 'The client agrees to a free audit, then a monthly Local SEO package',
+      background: def.trim(),
+      terms: ['RankQora', 'Google Business Profile', 'GBP', 'Map pack', 'citations', 'NAP', 'Search Console', 'Nadir'],
+    });
+  } catch { /* no default file: leave the brief blank */ }
+  return m;
+}
+
 function createMeeting() {
   ensure();
-  const m = blankMeeting(newId());
+  const m = prefillBrief(blankMeeting(newId()));
   writeJSON(meetingPath(m.id), m);
   return m;
 }
