@@ -741,7 +741,7 @@ function registerIpc() {
   // sidecar, so you can pick and test your headset BEFORE starting a meeting.
   ipcMain.handle('devices:list', () => runDevTool(['--list']));
   ipcMain.handle('devices:testSpeaker', (_e, output) =>
-    runDevTool(['--test-speaker', ...(output ? ['--output', output] : [])], 20000));
+    runDevTool(['--test-speaker', ...(output ? ['--output', output] : [])], 90000));
   ipcMain.handle('devices:testMic', (_e, opts) => runDevTool([
     '--test-mic',
     '--seconds', String((opts && opts.seconds) || 4),
@@ -811,7 +811,7 @@ function registerIpc() {
 }
 
 /** Run audio/devtest.py and parse its single line of JSON. */
-function runDevTool(args, timeout = 15000) {
+function runDevTool(args, timeout = 60000) {
   return new Promise((resolve) => {
     const py = resolvePython();
     if (!py) {

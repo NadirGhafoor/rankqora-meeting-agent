@@ -51,7 +51,7 @@ function resolvePython() {
     if (path.isAbsolute(exe) && !fs.existsSync(exe)) continue;
     try {
       const r = spawnSync(exe, [...pre, '-c', PROBE],
-        { encoding: 'utf8', timeout: 25000, windowsHide: true });
+        { encoding: 'utf8', timeout: 60000, windowsHide: true });
       if (r.status === 0 && String(r.stdout).includes('ok')) return { exe, pre };
     } catch { /* try next */ }
   }
